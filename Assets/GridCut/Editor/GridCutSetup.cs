@@ -63,6 +63,14 @@ public static class GridCutSetup
 
         so.ApplyModifiedProperties();
 
+        // 2b. 切割板吸附到九宮格切面
+        MeshCutter cutter = Object.FindFirstObjectByType<MeshCutter>(FindObjectsInactive.Include);
+
+        if (cutter != null && cutter.GetComponent<CuttingPlaneGridSnap>() == null)
+        {
+            Undo.AddComponent<CuttingPlaneGridSnap>(cutter.gameObject);
+        }
+
         // 3a. Prefab（Reset 重生的方塊也會有九宮格）
         bool prefabUpdated = false;
 

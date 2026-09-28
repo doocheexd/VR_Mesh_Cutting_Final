@@ -120,6 +120,47 @@ public class GridCutController : MonoBehaviour
         {
             aiTutorManager = FindFirstObjectByType<AITutorManager>();
         }
+
+        // 切割板吸附功能：沒掛的話自動補上
+        if (meshCutter != null &&
+            meshCutter.GetComponent<CuttingPlaneGridSnap>() == null)
+        {
+            meshCutter.gameObject.AddComponent<CuttingPlaneGridSnap>();
+        }
+    }
+
+    // =========================================================
+    // 給切割板吸附用：目前選好的切面（世界座標）
+    // =========================================================
+    public bool TryGetPlaneWorld(out GridCutTarget planeTarget, out Vector3 point, out Vector3 normal)
+    {
+        planeTarget = target;
+        point = Vector3.zero;
+        normal = Vector3.up;
+
+        if (!planeValid ||
+            target == null ||
+            !target.gameObject.activeInHierarchy)
+        {
+            return false;
+        }
+
+        Transform t = target.transform;
+
+        Vector3 w1 = t.TransformPoint(planeA);
+        Vector3 w2 = t.TransformPoint(planeB);
+        Vector3 w3 = t.TransformPoint(planeC);
+
+        Vector3 n = Vector3.Cross(w2 - w1, w3 - w1);
+
+        if (n.sqrMagnitude < 1e-12f)
+        {
+            return false;
+        }
+
+        point = w1;
+        normal = n.normalized;
+        return true;
     }
 
     private void OnDestroy()

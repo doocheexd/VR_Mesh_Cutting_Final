@@ -22,6 +22,10 @@ public class MeshCutter : MonoBehaviour
 
     private GameObject currentTarget;
 
+    // 給 CuttingPlaneGridSnap（切割板吸附到九宮格切面）用
+    public GameObject CurrentTarget => currentTarget;
+    public Transform CuttingPlaneTransform => cuttingPlane;
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Cuttable") ||
@@ -80,6 +84,26 @@ public class MeshCutter : MonoBehaviour
 
         GameObject target =
             currentTarget;
+
+        // 切割板已經吸附到九宮格選好的切面 → 用那個精準切面切
+        CuttingPlaneGridSnap gridSnap =
+            GetComponent<CuttingPlaneGridSnap>();
+
+        if (gridSnap != null &&
+            gridSnap.TryGetEngagedPlane(
+                target,
+                out Vector3 snapPoint,
+                out Vector3 snapNormal))
+        {
+            PerformSlice(
+                target,
+                snapPoint,
+                snapNormal,
+                snapNormal
+            );
+
+            return;
+        }
 
         // 使用校正後的切割角度
         Vector3 sliceNormal =
