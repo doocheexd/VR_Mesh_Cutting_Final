@@ -477,7 +477,7 @@ public class GridCutController : MonoBehaviour
             if (planeValid)
             {
                 Vector3 n = Vector3.Cross(planeB - planeA, planeC - planeA);
-                List<Vector3> poly = GridCutMeshUtil.PlaneBoxPolygon(target.LocalBounds, planeA, n);
+                List<Vector3> poly = target.GetSectionPolygon(planeA, n);
 
                 List<Vector3> ov = new List<Vector3>();
                 List<int> ot = new List<int>();

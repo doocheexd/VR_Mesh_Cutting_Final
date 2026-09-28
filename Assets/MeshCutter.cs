@@ -211,6 +211,15 @@ public class MeshCutter : MonoBehaviour
             -upperPushDirection
         );
 
+        // 切出來的兩塊也帶著自己那部分的九宮格點點，可以繼續切
+        GridCutTarget.InheritToPieces(
+            target,
+            upperHull,
+            lowerHull,
+            planePosition,
+            sliceNormal
+        );
+
         // 兩塊沿著切面方向慢慢分開一點點，看得出切開了
         StartCoroutine(
             SeparatePieces(
