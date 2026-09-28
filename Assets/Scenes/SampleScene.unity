@@ -12102,6 +12102,70 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1473904305}
   m_CullTransparentMesh: 1
+--- !u!1 &1493124035
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1493124037}
+  - component: {fileID: 1493124036}
+  m_Layer: 0
+  m_Name: GridCutController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1493124036
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1493124035}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 156034032b8b94f22903029b6e09f0c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GridCutController
+  meshCutter: {fileID: 1587903133}
+  aiTutorManager: {fileID: 884015969}
+  showMessagesOnBoard: 1
+  confirmBindings:
+  - <XRController>{RightHand}/primaryButton
+  - <Keyboard>/enter
+  clearBindings:
+  - <XRController>{LeftHand}/secondaryButton
+  - <Keyboard>/backspace
+  enableMouseClickInEditor: 1
+  gridLineMaterial: {fileID: 2100000, guid: 714fa72158b214e059fea0a638b230ea, type: 2}
+  dotMaterial: {fileID: 2100000, guid: 22f44a6e2f8be428f95b272bcc3703cc, type: 2}
+  dotHoverMaterial: {fileID: 2100000, guid: ee2609abe2cea4bf5a27b90beb582b00, type: 2}
+  dotSelectedMaterial: {fileID: 2100000, guid: e92d0d37b49304a18844ad46ea906848, type: 2}
+  previewDashMaterial: {fileID: 2100000, guid: 51eb45c9f7f844ef6a33e5c822ba09aa, type: 2}
+  previewOutlineMaterial: {fileID: 2100000, guid: 7686f190832e947df9c9a729ee92a210, type: 2}
+  dashThicknessRatio: 0.018
+  dashLengthRatio: 0.06
+  dashGapRatio: 0.04
+  outlineThicknessRatio: 0.014
+--- !u!4 &1493124037
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1493124035}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1501929459
 GameObject:
   m_ObjectHideFlags: 0
@@ -18716,3 +18780,4 @@ SceneRoots:
   - {fileID: 954090023}
   - {fileID: 1858668044}
   - {fileID: 953073080}
+  - {fileID: 1493124037}

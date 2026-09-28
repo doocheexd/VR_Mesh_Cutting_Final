@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 4885602099261248345}
   - component: {fileID: 1673035310293700873}
   - component: {fileID: 933331483583271574}
+  - component: {fileID: 5965436550924218213}
   m_Layer: 0
   m_Name: CutTarget_Cube
   m_TagString: Cuttable
@@ -284,3 +285,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0efafe17d6cb4bb4cb17f7af2763b235, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FreezeWhenReleased
+--- !u!114 &5965436550924218213
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2598267987854780006}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27641bab031974d7780c8f3a96f03244, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GridCutTarget
+  divisions: 3
+  lineWidthRatio: 0.012
+  dotRadiusRatio: 0.035
+  dotColliderRatio: 0.11
+  surfaceOffsetRatio: 0.0015
+  gridLineMaterial: {fileID: 0}
+  dotMaterial: {fileID: 0}
+  dotHoverMaterial: {fileID: 0}
+  dotSelectedMaterial: {fileID: 0}

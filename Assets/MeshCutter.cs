@@ -13,6 +13,13 @@ public class MeshCutter : MonoBehaviour
     // 玩家視角 AI 截圖
     [SerializeField] private AIVisionCapture aiVisionCapture;
 
+    [Header("切開後的效果")]
+    [Tooltip("兩塊各往外移動多少公尺（0.015 = 1.5 公分，兩塊之間約 3 公分的縫）")]
+    [SerializeField] private float separationDistance = 0.015f;
+
+    [Tooltip("分開的動作花多少秒")]
+    [SerializeField] private float separationDuration = 0.3f;
+
     private GameObject currentTarget;
 
     private void OnTriggerEnter(Collider other)
@@ -78,9 +85,52 @@ public class MeshCutter : MonoBehaviour
         Vector3 sliceNormal =
             GetSnappedPlaneNormal();
 
+        PerformSlice(
+            target,
+            cuttingPlane.position,
+            sliceNormal,
+            cuttingPlane.up
+        );
+    }
+
+    // =========================================================
+    // 九宮格點點切割用：直接指定切割平面（世界座標）
+    // =========================================================
+    public bool CutWithPlane(
+        GameObject target,
+        Vector3 planePoint,
+        Vector3 planeNormal
+    )
+    {
+        if (target == null ||
+            planeNormal.sqrMagnitude < 1e-12f)
+        {
+            return false;
+        }
+
+        Vector3 n = planeNormal.normalized;
+
+        return PerformSlice(
+            target,
+            planePoint,
+            n,
+            n
+        );
+    }
+
+    // =========================================================
+    // 共用的切割流程（切割板 / 九宮格點點 都走這裡）
+    // =========================================================
+    private bool PerformSlice(
+        GameObject target,
+        Vector3 planePosition,
+        Vector3 sliceNormal,
+        Vector3 upperPushDirection
+    )
+    {
         SlicedHull hull =
             target.Slice(
-                cuttingPlane.position,
+                planePosition,
                 sliceNormal
             );
 
@@ -90,7 +140,7 @@ public class MeshCutter : MonoBehaviour
                 "切割失敗：切割平面可能沒有真正穿過物件"
             );
 
-            return;
+            return false;
         }
 
         // 建立上半部
@@ -114,7 +164,10 @@ public class MeshCutter : MonoBehaviour
                 "切割失敗：無法建立切割後物件"
             );
 
-            return;
+            if (upperHull != null) Destroy(upperHull);
+            if (lowerHull != null) Destroy(lowerHull);
+
+            return false;
         }
 
         upperHull.name =
@@ -126,12 +179,21 @@ public class MeshCutter : MonoBehaviour
         // 設定切割後物件
         SetupCutPiece(
             upperHull,
-            cuttingPlane.up
+            upperPushDirection
         );
 
         SetupCutPiece(
             lowerHull,
-            -cuttingPlane.up
+            -upperPushDirection
+        );
+
+        // 兩塊沿著切面方向慢慢分開一點點，看得出切開了
+        StartCoroutine(
+            SeparatePieces(
+                upperHull,
+                lowerHull,
+                upperPushDirection
+            )
         );
 
         // =====================================================
@@ -147,7 +209,10 @@ public class MeshCutter : MonoBehaviour
             );
         }
 
-        currentTarget = null;
+        if (currentTarget == target)
+        {
+            currentTarget = null;
+        }
 
         // Undo 還需要原始物件
         // 所以這裡不 Destroy
@@ -179,6 +244,65 @@ public class MeshCutter : MonoBehaviour
         }
 
         Debug.Log("切割成功！");
+
+        return true;
+    }
+
+    // =========================================================
+    // 切開後兩塊輕輕分開（取代原本的彈飛 + 掉落）
+    // =========================================================
+
+    private System.Collections.IEnumerator SeparatePieces(
+        GameObject upper,
+        GameObject lower,
+        Vector3 direction
+    )
+    {
+        Vector3 dir =
+            direction.sqrMagnitude > 1e-8f
+                ? direction.normalized
+                : Vector3.up;
+
+        Vector3 upperStart =
+            upper.transform.position;
+
+        Vector3 lowerStart =
+            lower.transform.position;
+
+        float duration =
+            Mathf.Max(separationDuration, 0.01f);
+
+        float t = 0f;
+
+        while (t < duration)
+        {
+            t += Time.deltaTime;
+
+            float k =
+                Mathf.SmoothStep(0f, 1f, t / duration);
+
+            Vector3 offset =
+                dir * (separationDistance * k);
+
+            if (upper != null)
+            {
+                upper.transform.position =
+                    upperStart + offset;
+            }
+
+            if (lower != null)
+            {
+                lower.transform.position =
+                    lowerStart - offset;
+            }
+
+            if (upper == null && lower == null)
+            {
+                yield break;
+            }
+
+            yield return null;
+        }
     }
 
     // =========================================================
@@ -295,19 +419,14 @@ public class MeshCutter : MonoBehaviour
         Rigidbody rb =
             piece.AddComponent<Rigidbody>();
 
+        // 切開後留在原地，不會掉下去或彈飛
+        // （兩塊之間的小縫由 SeparatePieces 慢慢拉開）
         rb.mass = 0.5f;
-        rb.useGravity = true;
-        rb.isKinematic = false;
+        rb.useGravity = false;
+        rb.isKinematic = true;
 
         rb.collisionDetectionMode =
-            CollisionDetectionMode.Continuous;
-
-        // 稍微把兩塊推開
-        rb.AddForce(
-            pushDirection.normalized *
-            0.08f,
-            ForceMode.Impulse
-        );
+            CollisionDetectionMode.ContinuousSpeculative;
 
         // =====================================================
         // VR Grab

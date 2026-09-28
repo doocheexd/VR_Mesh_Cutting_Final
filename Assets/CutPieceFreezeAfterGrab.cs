@@ -16,9 +16,9 @@ public class CutPieceFreezeAfterGrab : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         grab = GetComponent<XRGrabInteractable>();
 
-        // 切割後一開始要能自然掉落
-        rb.isKinematic = false;
-        rb.useGravity = true;
+        // 切割後留在原地（不掉落、不彈飛），抓起來才會動
+        rb.useGravity = false;
+        rb.isKinematic = true;
 
         grab.selectEntered.AddListener(OnGrab);
         grab.selectExited.AddListener(OnRelease);
